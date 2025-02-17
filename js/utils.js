@@ -27,5 +27,5 @@ function showModal(modal) {
     console.warn(`Modal with ID '${modal}' not found.`);
   }
 }
-globalThis.API_URL = "http://103.155.161.248";
+globalThis.API_URL = "https://103.155.161.248";
 globalThis.SOCKET_URL = "ws://103.155.161.248/ws";
