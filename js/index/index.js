@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const apiUrl = "ws://103.155.161.248/ws";
+  const apiUrl = "wss://claim.mediasolution.ai/ws";
   let currentPage = 1;
   let itemsPerPage = 10;
   let allData = [];

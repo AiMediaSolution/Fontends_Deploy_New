@@ -1,4 +1,4 @@
-const apiUrl = "https://103.155.161.248";
+const apiUrl = "https://claim.mediasolution.ai";
 // Function to refresh the access token
 async function refreshToken() {
   const refreshToken = localStorage.getItem("refreshToken");
