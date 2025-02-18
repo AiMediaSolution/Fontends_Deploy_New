@@ -220,6 +220,30 @@
             </div>
         </div>
     </div>
+    <div id="noPermissionModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="noPermissionLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center border-0 shadow-lg">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="noPermissionLabel">
+                        <i class="fas fa-exclamation-triangle"></i> Access Denied
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <i class="fas fa-lock fa-3x text-danger mb-3"></i>
+                    <p class="fs-5 fw-semibold text-dark">You do not have permission to access this page.</p>
+                    <p class="text-muted">
+                        Only users with <strong>Admin</strong> or <strong>Manager</strong> roles can proceed.
+                    </p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-primary w-100" onclick="redirectToHome()">
+                        <i class="fas fa-home"></i> Go to Home
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Toast Notification -->
     <div class="toast-container position-fixed top-0 end-0 p-3">
         <div id="csv-toast" class="toast hide" role="alert" aria-live="polite" aria-atomic="true">

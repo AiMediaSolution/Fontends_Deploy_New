@@ -19,6 +19,8 @@ async function fetchAccounts() {
   } else {
     if (response.status === 401) {
       alert("Access forbidden: You do not have the required permissions.");
+    } else if (response.status === 403) {
+      showModal("noPermissionModal");
     } else {
       alert("Failed to fetch accounts");
     }
@@ -153,3 +155,7 @@ document.getElementById("last-page").addEventListener("click", goToLastPage);
 
 // Initial fetch of accounts
 fetchAccounts();
+
+function redirectToHome() {
+  window.location.href = "index.html";
+}

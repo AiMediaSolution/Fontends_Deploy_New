@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentPage = 1;
   let itemsPerPage = 10;
   let allData = [];
-  console.log(window.API_URL, "ne");
   const userName = localStorage.getItem("userName");
   if (userName) {
     connectWebSocket(userName, apiUrl, (data) => {
