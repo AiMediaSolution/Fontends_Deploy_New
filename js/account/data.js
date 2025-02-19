@@ -3,18 +3,16 @@ let currentPage = 1;
 let itemsPerPage = 10;
 
 document.getElementById("items-per-page").addEventListener("change", () => {
-  currentPage = 1;
+  itemsPerPage = parseInt(document.getElementById("items-per-page").value, 10);
+  const totalPages = Math.max(1, Math.ceil(accountsData.length / itemsPerPage));
+  if (currentPage > totalPages) currentPage = totalPages;
   renderTable();
 });
 
-// Function to fetch all accounts
 async function fetchAccounts() {
-  const response = await fetchWithAuth(`${apiUrl}/admin`, {
-    method: "GET",
-  });
-
+  const response = await fetchWithAuth(`${apiUrl}/admin`, { method: "GET" });
   if (response.ok) {
-    accountsData = await response.json(); // Save data locally
+    accountsData = await response.json();
     renderTable();
   } else {
     if (response.status === 401) {
@@ -27,25 +25,17 @@ async function fetchAccounts() {
   }
 }
 
-// Function to search accounts by username
 function searchAccounts() {
-  const searchInput = document
-    .getElementById("search-input")
-    .value.toLowerCase();
-  const filteredAccounts = accountsData.filter((account) =>
-    account.userName.toLowerCase().includes(searchInput)
-  );
-  renderTable(filteredAccounts);
+  currentPage = 1;
+  renderTable();
 }
 
-// Function to change page
 function changePage(direction) {
-  const totalPages = Math.ceil(accountsData.length / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(accountsData.length / itemsPerPage));
   currentPage = Math.max(1, Math.min(currentPage + direction, totalPages));
   renderTable();
 }
 
-// Function to go to the first page
 function goToFirstPage() {
   if (currentPage !== 1) {
     currentPage = 1;
@@ -53,88 +43,73 @@ function goToFirstPage() {
   }
 }
 
-// Function to go to the last page
 function goToLastPage() {
-  const totalPages = Math.ceil(accountsData.length / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(accountsData.length / itemsPerPage));
   if (currentPage !== totalPages) {
     currentPage = totalPages;
     renderTable();
   }
 }
 
-// Function to render table with pagination and filtering
-function renderTable(filteredAccounts = accountsData) {
+function renderTable() {
   const accountTableBody = document.getElementById("accountTableBody");
   const totalEntries = document.getElementById("total-entries");
-  const firstPage = document.getElementById("first-page");
-  const previousPage = document.getElementById("previous-page");
-  const nextPage = document.getElementById("next-page");
-  const lastPage = document.getElementById("last-page");
   const pageNumberInput = document.getElementById("page-number");
 
-  itemsPerPage = parseInt(document.getElementById("items-per-page").value, 10);
+  const searchInput = document
+    .getElementById("search-input")
+    .value.toLowerCase();
+  const filteredAccounts = accountsData.filter((account) =>
+    account.userName.toLowerCase().includes(searchInput)
+  );
+
   const totalItems = filteredAccounts.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+  currentPage = Math.min(currentPage, totalPages);
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
   const paginatedAccounts = filteredAccounts.slice(startIndex, endIndex);
 
-  accountTableBody.innerHTML = "";
-  paginatedAccounts.forEach((account, index) => {
-    let statusAccount = "";
-    let btn = "";
-    if (account.isDeleted) {
-      statusAccount = `<td><span class="status text-dark">&bull;</span></td>`;
-      btn = `<button class="btn btn-info" onclick="openRestoreModal(${account.account_Id}, '${account.userName}')" title="Resend">
-    <i class="fa fa-rotate-right"></i>
-  </button>`;
-    } else {
-      statusAccount = `<td><span class="status text-success">&bull;</span></td>`;
-      btn = `<button class="btn btn-danger" onclick="openDeleteModal(${account.account_Id}, '${account.userName}')" title="Delete">
-    <i class="fa fa-trash"></i>
-  </button>`;
-    }
+  accountTableBody.innerHTML = paginatedAccounts
+    .map((account, index) => {
+      let statusAccount = account.isDeleted
+        ? '<td><span class="status text-dark">&bull;</span></td>'
+        : '<td><span class="status text-success">&bull;</span></td>';
 
-    const row = document.createElement("tr");
-    row.innerHTML = `
-            <td>${startIndex + index + 1}</td>
-            <td>${account.account_Id}</td>
-            <td>${account.account_type}</td>
-            <td>${account.userName}</td>
-            <td>${account.data}</td>
-            ${statusAccount}
-<td>
-  <button class="btn btn-primary" 
-          onclick="openEditModal(${account.account_Id}, '${
-      account.account_type
-    }', '${account.userName}')">
-    <i class="fa fa-pencil-alt"></i>
-  </button>
-  ${btn}
-</td>
-        `;
-    accountTableBody.appendChild(row);
-  });
+      let actionButton = account.isDeleted
+        ? `<button class="btn btn-info" onclick="openRestoreModal(${account.account_Id}, '${account.userName}')" title="Resend">
+          <i class="fa fa-rotate-right"></i>
+        </button>`
+        : `<button class="btn btn-danger" onclick="openDeleteModal(${account.account_Id}, '${account.userName}')" title="Delete">
+          <i class="fa fa-trash"></i>
+        </button>`;
+
+      return `
+      <tr>
+        <td>${startIndex + index + 1}</td>
+        <td>${account.account_Id}</td>
+        <td>${account.account_type}</td>
+        <td>${account.userName}</td>
+        <td>${account.data}</td>
+        ${statusAccount}
+        <td>
+          <button class="btn btn-primary" onclick="openEditModal(${
+            account.account_Id
+          }, '${account.account_type}', '${account.userName}')">
+            <i class="fa fa-pencil-alt"></i>
+          </button>
+          ${actionButton}
+        </td>
+      </tr>`;
+    })
+    .join("");
 
   totalEntries.textContent = totalItems;
-  firstPage.classList.toggle("disabled", currentPage === 1);
-  previousPage.classList.toggle("disabled", currentPage === 1);
-  nextPage.classList.toggle("disabled", currentPage === totalPages);
-  lastPage.classList.toggle("disabled", currentPage === totalPages);
-
-  firstPage.querySelector("a").style.pointerEvents =
-    currentPage === 1 ? "none" : "auto";
-  previousPage.querySelector("a").style.pointerEvents =
-    currentPage === 1 ? "none" : "auto";
-  nextPage.querySelector("a").style.pointerEvents =
-    currentPage === totalPages ? "none" : "auto";
-  lastPage.querySelector("a").style.pointerEvents =
-    currentPage === totalPages ? "none" : "auto";
-
   pageNumberInput.value = currentPage;
   pageNumberInput.onchange = () => {
-    const newPage = parseInt(pageNumberInput.value);
-    if (newPage >= 1 && newPage <= totalPages) {
+    let newPage = parseInt(pageNumberInput.value, 10);
+    if (!isNaN(newPage) && newPage >= 1 && newPage <= totalPages) {
       currentPage = newPage;
       renderTable();
     } else {
@@ -143,7 +118,6 @@ function renderTable(filteredAccounts = accountsData) {
   };
 }
 
-// Event listeners for pagination buttons
 document.getElementById("first-page").addEventListener("click", goToFirstPage);
 document
   .getElementById("previous-page")
@@ -153,9 +127,4 @@ document
   .addEventListener("click", () => changePage(1));
 document.getElementById("last-page").addEventListener("click", goToLastPage);
 
-// Initial fetch of accounts
 fetchAccounts();
-
-function redirectToHome() {
-  window.location.href = "index.html";
-}
