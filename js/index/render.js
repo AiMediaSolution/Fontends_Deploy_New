@@ -1,15 +1,4 @@
 const renderTable = () => {
-  const formatter = new Intl.DateTimeFormat("vi-VN", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-    timeZone: "Asia/Ho_Chi_Minh",
-  });
-
   const dataList = document.getElementById("data-list");
   const tableHeader = document.getElementById("table-header");
   const totalEntries = document.getElementById("total-entries");
@@ -102,12 +91,11 @@ const renderTable = () => {
         </a>`
         : "";
 
-    const dateObject = new Date(item.date);
     tr.innerHTML = `
       <td>${startIndex + index + 1}</td>
       ${hasUserName ? `<td>${item.userName}</td>` : ""}
       <td>${item.content}</td>
-      <td>${formatter.format(dateObject)}</td>
+      <td>${formatDateVN(item.date)}</td>
       ${statusDot}
       <td>${displayAction}</td>
     `;

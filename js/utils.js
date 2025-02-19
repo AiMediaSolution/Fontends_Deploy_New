@@ -27,5 +27,20 @@ function showModal(modal) {
     console.warn(`Modal with ID '${modal}' not found.`);
   }
 }
+
+function formatDateVN(dateInput) {
+  const dateObject = new Date(dateInput);
+  const formatter = new Intl.DateTimeFormat("vi-VN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Ho_Chi_Minh",
+  });
+  return formatter.format(dateObject);
+}
 globalThis.API_URL = "https://claim.mediasolution.ai";
 globalThis.SOCKET_URL = "wss://claim.mediasolution.ai/ws";

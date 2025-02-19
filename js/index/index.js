@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const action = data.payload.action || "";
     if (action === "editData") {
       div.textContent = `${data.payload.message}, Date: ${
-        data.payload.data.date || "N/A"
+        formatDateVN(data.payload.data.date) || "N/A"
       }, Content: ${data.payload.data.content || "N/A"}, Status now: ${
         data.payload.data.statusData || "N/A"
       } `;

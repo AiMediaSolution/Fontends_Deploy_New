@@ -52,7 +52,9 @@ async function fetchWithAuth(url, options = {}) {
 
   return response;
 }
-
+function redirectToHome() {
+  window.location.href = "index.html";
+}
 // Function to log out
 function logout() {
   localStorage.removeItem("token");
